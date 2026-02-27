@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Reporte de Visita a Obra</title>
+    <style>
+        :root {
+            --primary-color: #0A2463;
+            --secondary-color: #3E92CC;
+            --accent-color: #1FC8A9;
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 20px;
+            background: var(--secondary-color);
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #444;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="time"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+            /* Fix padding issue */
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        /* Radio buttons styling */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-option input {
+            margin-right: 8px;
+        }
+
+        /* Drag and Drop Zone */
+        .drop-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafbfc;
+        }
+
+        .drop-zone.dragover {
+            border-color: var(--secondary-color);
+            background: #f0f7ff;
+        }
+
+        .drop-zone p {
+            margin: 0;
+            color: #64748b;
+        }
+
+        .drop-zone i {
+            font-size: 40px;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        #preview-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .preview-item {
+            position: relative;
+            aspect-ratio: 1;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #0A2463 0%, #3E92CC 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(10, 36, 99, 0.3);
+        }
+
+        .conditional-field {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #ffebeb;
+            border-radius: 8px;
+            border-left: 4px solid #ff4d4d;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 0, 0, 1);
+            transform: scale(1.1);
+        }
+
+        .delete-all-btn {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+            /* Hidden by default */
+        }
+
+        .delete-all-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .size-info {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .size-info.error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+
+        /* Overlay de Carga */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loadingOverlay h3 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        /* ===== CAPTURA MÓVIL ===== */
+        .camera-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .btn-camera {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent-color), #17a88e);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-camera:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(31, 200, 169, 0.4);
+        }
+
+        .btn-camera:active {
+            transform: scale(0.97);
+        }
+
+        .btn-gallery {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--secondary-color), #2d7ab5);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-gallery:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(62, 146, 204, 0.4);
+        }
+
+        .btn-gallery:active {
+            transform: scale(0.97);
+        }
+
+        /* ===== RESPONSIVE MOBILE ===== */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px 16px;
+                border-radius: 10px;
+            }
+
+            .header {
+                margin-bottom: 24px;
+                padding-bottom: 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            /* Grid a una columna */
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            /* Inputs touch-friendly (min 44px) */
+            input[type="text"],
+            input[type="number"],
+            input[type="date"],
+            input[type="time"],
+            textarea,
+            select {
+                padding: 14px 12px;
+                font-size: 16px; /* Evita zoom en iOS */
+                min-height: 48px;
+            }
+
+            label {
+                font-size: 14px;
+                margin-bottom: 6px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                margin-bottom: 14px;
+            }
+
+            .form-section {
+                margin-bottom: 24px;
+            }
+
+            /* Radio buttons más grandes para touch */
+            .radio-group {
+                gap: 16px;
+            }
+
+            .radio-option {
+                padding: 8px 4px;
+                font-size: 15px;
+            }
+
+            .radio-option input[type="radio"] {
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
+            }
+
+            /* Drop zone adaptada */
+            .drop-zone {
+                padding: 24px 16px;
+            }
+
+            .drop-zone i {
+                font-size: 32px;
+                margin-bottom: 10px;
+            }
+
+            .drop-zone p {
+                font-size: 14px;
+            }
+
+            /* Mostrar botones de cámara/galería en móvil */
+            .btn-camera,
+            .btn-gallery {
+                display: flex;
+            }
+
+            /* Ocultar drag-and-drop en móvil (no tiene sentido) */
+            .drop-zone {
+                display: none;
+            }
+
+            /* Preview grid adaptado */
+            #preview-container {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 10px;
+            }
+
+            .delete-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+            }
+
+            /* Botón submit más grande */
+            .btn-submit {
+                padding: 16px;
+                font-size: 17px;
+                margin-top: 24px;
+            }
+
+            /* Botón eliminar todas */
+            .delete-all-btn {
+                padding: 12px 20px;
+                font-size: 15px;
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Conditional field */
+            .conditional-field {
+                padding: 12px;
+            }
+
+            /* Loading overlay */
+            #loadingOverlay h3 {
+                font-size: 18px;
+            }
+
+            #loadingOverlay p {
+                font-size: 14px;
+            }
+
+            .size-info {
+                font-size: 14px;
+            }
+        }
+
+        /* Pantallas muy pequeñas (< 400px) */
+        @media screen and (max-width: 400px) {
+            body {
+                padding: 6px;
+            }
+
+            .container {
+                padding: 16px 12px;
+                border-radius: 8px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .camera-actions {
+                flex-direction: column;
+            }
+
+            #preview-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <h3>Generando Reporte...</h3>
+        <p>Por favor espere un momento</p>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Reporte de Visita a Obra</h1>
+            <p>Complete el formulario para generar el PDF oficial</p>
+        </div>
+
+        <form id="reportForm">
+            <!-- SECCIÓN 1: DATOS GENERALES -->
+            <div class="form-section">
+                <div class="section-title">Datos Generales</div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Nombre de la Planta</label>
+                        <input type="text" name="nombre_planta" required placeholder="Ej. Planta Solar Querétaro">
+                    </div>
+                    <div class="form-group">
+                        <label>ID de Proyecto</label>
+                        <input type="text" name="id_proyecto" required placeholder="Ej. PRJ-2023-001">
+                    </div>
+                    <div class="form-group">
+                        <label>Ubicación</label>
+                        <input type="text" name="ubicacion" required placeholder="Ciudad, Estado">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Persona Responsable (Interno)</label>
+                        <input type="text" name="persona_responsable_interna" required
+                            placeholder="Nombre del supervisor interno">
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Responsable de Obra</label>
+                        <input type="text" name="responsable_obra" required
+                            placeholder="Nombre del responsable en sitio">
+                    </div>
+                    <!-- Campo de fecha oculto o visible según preferencia, aquí visible -->
+                    <div class="form-group">
+                        <label>Fecha de Reporte</label>
+                        <input type="date" name="fecha">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 2: DATOS DE LA VISITA -->
+            <div class="form-section">
+                <div class="section-title">Detalles de la Visita</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Número de Visita</label>
+                        <input type="number" name="numero_visita" min="1" value="1" required
+                            onkeydown="return event.key !== 'e' && event.key !== 'E'">
+                    </div>
+                    <div></div> <!-- Spacer -->
+
+                    <div class="form-group">
+                        <label>Hora de Entrada</label>
+                        <input type="time" name="hora_entrada" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Hora de Salida</label>
+                        <input type="time" name="hora_salida" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Motivo de la Visita</label>
+                        <textarea name="motivo_visita" rows="6" required style="min-height: 100px; resize: vertical;"
+                            placeholder="Describa el propósito de la visita..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>¿Los avances van conforme al cronograma?</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="avances_conforme_cronograma" value="true" checked
+                                    onchange="toggleReason(false)">
+                                Sí
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="avances_conforme_cronograma" value="false"
+                                    onchange="toggleReason(true)">
+                                No
+                            </label>
+                        </div>
+
+                        <div id="razonContainer" class="conditional-field">
+                            <label>¿Por qué?</label>
+                            <input type="text" name="razon_no_conforme" placeholder="Explique la causa del retraso...">
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Acuerdos</label>
+                        <textarea name="acuerdos" rows="4"
+                            placeholder="Acuerdos tomados entre empresa y responsable..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN 3: EVIDENCIA FOTOGRÁFICA -->
+            <div class="form-section">
+                <div class="section-title">Evidencia Fotográfica</div>
+                <div class="drop-zone" id="dropZone">
+                    <i>📷</i>
+                    <p><strong>Arrastra tus fotos aquí</strong> o haz clic para seleccionar</p>
+                    <p style="font-size: 12px; margin-top: 5px;">Se recomienda comprimir imágenes grandes (Max Total:
+                        30MB)</p>
+                    <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                </div>
+                <!-- Botones de cámara y galería (visibles solo en móvil vía CSS) -->
+                <div class="camera-actions">
+                    <button type="button" class="btn-camera" id="btnCamera">
+                        📸 Tomar Foto
+                    </button>
+                    <button type="button" class="btn-gallery" id="btnGallery">
+                        🖼️ Galería
+                    </button>
+                </div>
+                <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display: none;">
+                <input type="file" id="galleryInput" multiple accept="image/*" style="display: none;">
+                <div class="size-info" id="sizeInfo">Total: 0 MB / 30 MB</div>
+                <button type="button" class="delete-all-btn" id="deleteAllBtn" onclick="removeAllFiles()">Eliminar
+                    Todas</button>
+                <div id="preview-container"></div>
+            </div>
+
+            <button type="submit" class="btn-submit">Generar PDF</button>
+        </form>
+    </div>
+
+    <script>
+        // Lógica para mostrar/ocultar razón de no conformidad
+        function toggleReason(show) {
+            const container = document.getElementById('razonContainer');
+            const input = container.querySelector('input');
+            if (show) {
+                container.style.display = 'block';
+                input.setAttribute('required', 'true');
+            } else {
+                container.style.display = 'none';
+                input.removeAttribute('required');
+                input.value = '';
+            }
+        }
+
+        // Configurar fecha por defecto a hoy
+        document.querySelector('input[name="fecha"]').valueAsDate = new Date();
+
+        // Lógica de Imágenes
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const cameraInput = document.getElementById('cameraInput');
+        const galleryInput = document.getElementById('galleryInput');
+        const btnCamera = document.getElementById('btnCamera');
+        const btnGallery = document.getElementById('btnGallery');
+        const previewContainer = document.getElementById('preview-container');
+        const deleteAllBtn = document.getElementById('deleteAllBtn');
+        const sizeInfo = document.getElementById('sizeInfo');
+
+        let selectedFiles = []; // Array de objetos { file: File, compressed: Blob|null, url: string }
+        const MAX_TOTAL_SIZE_MB = 30;
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // Botón de cámara: abre la cámara del dispositivo
+        btnCamera.addEventListener('click', () => cameraInput.click());
+        cameraInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            cameraInput.value = '';
+        });
+
+        // Botón de galería: abre el selector de archivos
+        btnGallery.addEventListener('click', () => galleryInput.click());
+        galleryInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            galleryInput.value = '';
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+            fileInput.value = ''; // Reset para permitir seleccionar los mismos archivos
+        });
+
+        async function handleFiles(files) {
+            const newFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+
+            // Procesar y comprimir imágenes nuevas
+            const processed = await Promise.all(newFiles.map(async (file) => {
+                try {
+                    return await processImage(file);
+                } catch (e) {
+                    console.error("Error procesando imagen", e);
+                    return null;
+                }
+            }));
+
+            const validProcessed = processed.filter(p => p !== null);
+            selectedFiles = [...selectedFiles, ...validProcessed];
+            updatePreview();
+        }
+
+        async function processImage(file) {
+            // Si la imagen es mayor a 1MB, intentamos comprimirla
+            if (file.size > 1 * 1024 * 1024) {
+                return await compressImage(file);
+            } else {
+                return {
+                    file: file,
+                    compressed: null, // No comprimida (original usada)
+                    size: file.size,
+                    url: URL.createObjectURL(file)
+                };
+            }
+        }
+
+        function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const MAX_WIDTH = 1920;
+                        const MAX_HEIGHT = 1920;
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                reject(new Error('Compression failed'));
+                                return;
+                            }
+                            // Si el blob comprimido es mayor que el original, usamos el original
+                            if (blob.size >= file.size) {
+                                resolve({
+                                    file: file,
+                                    compressed: null,
+                                    size: file.size,
+                                    url: URL.createObjectURL(file)
+                                });
+                            } else {
+                                resolve({
+                                    file: file, // Guardamos referencia al original por si acaso
+                                    compressed: blob, // Usaremos este para enviar
+                                    size: blob.size,
+                                    url: URL.createObjectURL(blob)
+                                });
+                            }
+                        }, 'image/jpeg', 0.8); // Calidad Jpeg 0.8
+                    };
+                    img.onerror = (err) => reject(err);
+                };
+                reader.onerror = (err) => reject(err);
+            });
+        }
+
+        function updatePreview() {
+            previewContainer.innerHTML = '';
+            let totalSize = 0;
+
+            selectedFiles.forEach((item, index) => {
+                totalSize += item.size;
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <div class="delete-btn" onclick="removeFile(${index})" title="Eliminar">&times;</div>
+                    <img src="${item.url}" title="${item.file.name} (${(item.size / 1024 / 1024).toFixed(2)} MB)">
+                `;
+                previewContainer.appendChild(div);
+            });
+
+            // Actualizar info de tamaño
+            const totalMB = totalSize / (1024 * 1024);
+            sizeInfo.innerText = `Total: ${totalMB.toFixed(2)} MB / ${MAX_TOTAL_SIZE_MB} MB`;
+
+            if (totalMB > MAX_TOTAL_SIZE_MB) {
+                sizeInfo.classList.add('error');
+            } else {
+                sizeInfo.classList.remove('error');
+            }
+
+            // Mostrar/ocultar botón de borrar todo
+            deleteAllBtn.style.display = selectedFiles.length > 0 ? 'block' : 'none';
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updatePreview();
+        }
+
+        function removeAllFiles() {
+            if (confirm('¿Seguro que quieres eliminar todas las imágenes?')) {
+                selectedFiles = [];
+                updatePreview();
+            }
+        }
+
+        // Envío del Formulario
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (selectedFiles.length === 0) {
+                alert('Por favor agrega al menos una imagen de evidencia.');
+                return;
+            }
+
+            // Validar peso total
+            let totalSize = selectedFiles.reduce((acc, item) => acc + item.size, 0);
+            if (totalSize > MAX_TOTAL_SIZE_MB * 1024 * 1024) {
+                alert(`El peso total de las imágenes (${(totalSize / 1024 / 1024).toFixed(2)} MB) excede el límite de ${MAX_TOTAL_SIZE_MB} MB. Por favor elimina algunas imágenes.`);
+                return;
+            }
+
+            const formData = new FormData(e.target);
+
+            // Construir objeto JSON para el campo 'data'
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                if (key !== 'images' && key !== 'razon_no_conforme') {
+                    jsonData[key] = value;
+                }
+            });
+
+            // Manejo especial de booleanos y condicionales
+            jsonData['avances_conforme_cronograma'] = formData.get('avances_conforme_cronograma') === 'true';
+            if (!jsonData['avances_conforme_cronograma']) {
+                jsonData['razon_no_conforme'] = formData.get('razon_no_conforme');
+            } else {
+                jsonData['razon_no_conforme'] = "";
+            }
+
+            // Convertir formato de fecha
+            if (jsonData['fecha']) {
+                const parts = jsonData['fecha'].split('-');
+                jsonData['fecha'] = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            }
+
+            // Crear FormData final para enviar
+            const finalFormData = new FormData();
+            finalFormData.append('data', JSON.stringify(jsonData));
+
+            // Adjuntar imágenes (usando la versión comprimida si existe)
+            selectedFiles.forEach((item, index) => {
+                const blobToSend = item.compressed || item.file;
+                // Nos aseguramos de enviar un nombre de archivo
+                finalFormData.append('images', blobToSend, item.file.name);
+            });
+
+            const btn = document.querySelector('.btn-submit');
+            btn.disabled = true;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            try {
+                const response = await fetch('/api/reports/site-visit', {
+                    method: 'POST',
+                    body: finalFormData
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const contentDisposition = response.headers.get('Content-Disposition');
+                    let filename = 'reporte_visita.pdf';
+                    if (contentDisposition) {
+                        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                        if (filenameMatch && filenameMatch.length === 2) filename = filenameMatch[1];
+                    }
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                } else {
+                    const errorData = await response.json();
+                    alert('Error: ' + (errorData.detail || 'Error al generar PDF'));
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error de conexión con el servidor');
+            } finally {
+                btn.disabled = false;
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

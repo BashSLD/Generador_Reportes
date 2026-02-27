@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: Letter;
+            margin: 0.5cm;
+
+            @bottom-center {
+                content: element(footer);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #1E1B18;
+            font-size: 10pt;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            background: linear-gradient(135deg, #0A2463 0%, #2D5A9E 50%, #3E92CC 100%);
+            padding: 10px 20px;
+            border-radius: 10px !important;
+            margin: 0 0 15px 0;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            vertical-align: middle;
+        }
+
+        .company-name {
+            font-size: 14pt;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .doc-title {
+            font-size: 14pt;
+            font-weight: 300;
+            text-align: right;
+            margin-bottom: 2px;
+        }
+
+        /* ... */
+
+        /* ============ FOTOS (Pagina 2) ============ */
+        .photos-section {
+            page-break-before: always;
+            margin-top: 20px;
+        }
+
+        .photos-grid {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+
+        .photo-card {
+            display: inline-block;
+            width: 30%;
+            margin: 1%;
+            background: #fff;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            vertical-align: top;
+        }
+
+        .photo-img-container {
+            width: 100%;
+            height: 180px;
+            background: #fff;
+            margin-bottom: 5px;
+            text-align: center;
+            line-height: 178px;
+            /* Vertical align trick */
+        }
+
+        .photo-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .photo-label {
+            font-size: 8pt;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .doc-date {
+            text-align: right;
+            font-size: 10pt;
+            color: white;
+            margin-top: 5px;
+        }
+
+        /* ============ DATA TABLES ============ */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 10pt;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            vertical-align: top;
+        }
+
+        .data-table th {
+            background-color: #f4f6f9;
+            text-align: left;
+            width: 35%;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #fcfcfc;
+        }
+
+        .alert-text {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER GRÁFICO -->
+    <div class="header">
+        <table class="header-table">
+            <tr>
+                <td>
+                    <div class="company-name">Tu Empresa</div>
+                </td>
+                <td>
+                    <div class="doc-title">FORMATO DE VISITA A OBRA</div>
+                    <div class="doc-date">Fecha de Reporte: {{ data.fecha }}</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- TABLA 1: DATOS GENERALES -->
+    <h2>Datos Generales</h2>
+    <table class="data-table">
+        <tr>
+            <th>Nombre de la planta</th>
+            <td>{{ data.nombre_planta }}</td>
+        </tr>
+        <tr>
+            <th>ID de Proyecto</th>
+            <td>{{ data.id_proyecto }}</td>
+        </tr>
+        <tr>
+            <th>Ubicación</th>
+            <td>{{ data.ubicacion }}</td>
+        </tr>
+        <tr>
+            <th>Persona responsable (Interno)</th>
+            <td>{{ data.persona_responsable_interna }}</td>
+        </tr>
+        <tr>
+            <th>Responsable de obra</th>
+            <td>{{ data.responsable_obra }}</td>
+        </tr>
+    </table>
+
+    <!-- TABLA 2: DATOS DE LA VISITA -->
+    <h2>Datos de la Visita</h2>
+    <table class="data-table">
+        <tr>
+            <th>No. Visita</th>
+            <td>{{ data.numero_visita }}</td>
+        </tr>
+        <tr>
+            <th>Horario (Entrada - Salida)</th>
+            <td>{{ data.hora_entrada }} - {{ data.hora_salida }} HRS</td>
+        </tr>
+        <tr>
+            <th>Motivo de visita</th>
+            <td>{{ data.motivo_visita }}</td>
+        </tr>
+        <tr>
+            <th>¿Avances conforme al cronograma?</th>
+            <td>
+                {% if data.avances_conforme_cronograma %}
+                <span style="color: #2E7D32; font-weight: bold;">SÍ</span>
+                {% else %}
+                <span class="alert-text">NO</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% if not data.avances_conforme_cronograma %}
+        <tr>
+            <th>¿Por qué?</th>
+            <td class="alert-text">{{ data.razon_no_conforme }}</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <th>Acuerdos</th>
+            <td>{{ data.acuerdos }}</td>
+        </tr>
+    </table>
+
+    <!-- SECCION DE FOTOS (Pagina 2) -->
+    <div class="photos-section">
+        <h2>Evidencia Fotográfica</h2>
+        <div class="photos-grid">
+            {% for img in images %}
+            <div class="photo-card">
+                <div class="photo-img-container">
+                    <img src="{{ img }}" alt="Evidencia">
+                </div>
+                <div class="photo-label">FOTO {{ loop.index }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        Documento generado automáticamente por el Sistema de Reportes | {{ data.fecha }}
+    </div>
+</body>
+
+</html>

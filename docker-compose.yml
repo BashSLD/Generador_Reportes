@@ -1,0 +1,10 @@
+services:
+  pdf-service:
+    build: .
+    ports:
+      - "8002:8002"
+    volumes:
+      - .:/app  # Hot reload - cambios se reflejan automáticamente
+    environment:
+      - ENVIRONMENT=development
+    command: uvicorn main:app --host 0.0.0.0 --port 8002 --reload
