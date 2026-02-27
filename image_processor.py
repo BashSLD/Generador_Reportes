@@ -1,7 +1,7 @@
 """
 Servicio para procesamiento y optimización de imágenes
 """
-from PIL import Image
+from PIL import Image, ImageOps
 import io
 import base64
 from typing import List, Tuple
@@ -34,10 +34,13 @@ class ImageProcessor:
             quality = settings.IMAGE_QUALITY
         
         img = Image.open(io.BytesIO(image_bytes))
-        
+
+        # Aplicar orientación EXIF (fotos de celular aparecen giradas sin esto)
+        img = ImageOps.exif_transpose(img)
+
         original_size = len(image_bytes)
         original_width, original_height = img.size
-        
+
         # Convertir RGBA/LA/P a RGB (PDFs no manejan bien alpha channel)
         if img.mode in ('RGBA', 'LA', 'P'):
             background = Image.new('RGB', img.size, (255, 255, 255))
